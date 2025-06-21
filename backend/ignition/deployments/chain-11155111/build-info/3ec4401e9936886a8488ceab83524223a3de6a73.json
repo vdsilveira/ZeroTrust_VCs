@@ -1,0 +1,41 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "3ec4401e9936886a8488ceab83524223a3de6a73",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "publicSourceNameMap": {
+    "contracts/VerifiableCredentialIssuer.sol": "contracts/VerifiableCredentialIssuer.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "evmVersion": "cancun",
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": [
+        "forge-std/=npm/forge-std@1.9.4/src/"
+      ]
+    },
+    "sources": {
+      "contracts/VerifiableCredentialIssuer.sol": {
+        "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.19;\n\ncontract VerifiableCredentialIssuer {\n    address public owner;\n\n    // Estrutura simples da credencial\n    struct Credential {\n        address subject;     // Para quem é a credencial\n        string data;         // Dados da credencial (ex: JSON, IPFS hash, etc)\n        uint256 issuedAt;    // Timestamp de emissão\n        bool revoked;        // Se a credencial foi revogada\n    }\n\n    // Mapping: credentialId => Credential\n    mapping(bytes32 => Credential) public credentials;\n    // Mapping: subject => array of credentialIds\n    mapping(address => bytes32[]) public subjectCredentials;\n\n    // Eventos\n    event CredentialIssued(bytes32 indexed credentialId, address indexed subject, string data);\n    event CredentialRevoked(bytes32 indexed credentialId);\n\n    modifier onlyOwner() {\n        require(msg.sender == owner, \"Somente o emissor pode executar\");\n        _;\n    }\n\n    constructor() {\n        owner = msg.sender;\n    }\n\n    // Emitir uma credencial\n    function issueCredential(address subject, string calldata data) external onlyOwner returns (bytes32) {\n        // Gera um ID único da credencial\n        bytes32 credentialId = keccak256(abi.encodePacked(subject, data, block.timestamp));\n\n        // Salva a credencial\n        credentials[credentialId] = Credential({\n            subject: subject,\n            data: data,\n            issuedAt: block.timestamp,\n            revoked: false\n        });\n        // Adiciona o ID da credencial ao sujeito\n        subjectCredentials[subject].push(credentialId);\n\n        emit CredentialIssued(credentialId, subject, data);\n        return credentialId;\n    }\n\n    // Revogar uma credencial\n    function revokeCredential(bytes32 credentialId) external onlyOwner {\n        require(credentials[credentialId].issuedAt != 0, \"Credencial nao existe\");\n        require(!credentials[credentialId].revoked, \"Credencial ja revogada\");\n\n        credentials[credentialId].revoked = true;\n        emit CredentialRevoked(credentialId);\n    }\n\n    // Verificar se a credencial é válida\n    function isCredentialValid(bytes32 credentialId) external view returns (bool) {\n        Credential memory cred = credentials[credentialId];\n        return (cred.issuedAt != 0 && !cred.revoked);\n    }\n\n    // Recuperar dados da credencial\n    function getCredential(bytes32 credentialId) external view returns (address subject, string memory data, uint256 issuedAt, bool revoked) {\n        Credential memory cred = credentials[credentialId];\n        require(cred.issuedAt != 0, \"Credencial nao existe\");\n        return (cred.subject, cred.data, cred.issuedAt, cred.revoked);\n    }\n    // Recuperar todas as credenciais de um sujeito\n    function getSubjectCredentials(address subject) external view returns (bytes32[] memory) {\n        return subjectCredentials[subject];\n    }\n}\n"
+      }
+    }
+  }
+}

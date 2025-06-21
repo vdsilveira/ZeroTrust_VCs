@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Credenciais Verificáveis (Localhost)</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+  <h2>Emitir Credencial</h2>
+  <label>Endereço do usuário:</label><br>
+  <input type="text" id="subject" size="42"><br>
+  <label>Dados da credencial:</label><br>
+  <input type="text" id="credData" size="42"><br>
+  <button onclick="issueCredential()">Emitir</button>
+  <p id="issueResult"></p>
+
+  <hr>
+
+  <h2>Verificar Credencial</h2>
+  <label>ID da Credencial (keccak256):</label><br>
+  <input type="text" id="credId" size="66"><br>
+  <button onclick="checkCredential()">Verificar</button>
+  <p id="checkResult"></p>
+
+  <script>
+    const contractAddress = 'SEU_ENDERECO_DO_CONTRATO'; // <<<< troque isso
+    const PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
+    const JSON_RPC_URL = 'http://localhost:8545';
+
+    const abi = [
+      "function issueCredential(address subject, string calldata data) external returns (bytes32)",
+      "function isCredentialValid(bytes32 credentialId) external view returns (bool)",
+      "event CredentialIssued(bytes32 indexed credentialId, address indexed subject, string data)"
+    ];
+
+    const provider = new ethers.JsonRpcProvider(JSON_RPC_URL);
+    const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
+    const contract = new ethers.Contract(contractAddress, abi, wallet);
+
+    async function issueCredential() {
+      const subject = document.getElementById("subject").value;
+      const data = document.getElementById("credData").value;
+      const result = document.getElementById("issueResult");
+
+      try {
+        const tx = await contract.issueCredential(subject, data);
+        const receipt = await tx.wait();
+        const event = receipt.logs.find(log => log.fragment.name === "CredentialIssued");
+        const credentialId = event.args.credentialId;
+        result.innerText = "✅ Credencial emitida! ID: " + credentialId;
+      } catch (err) {
+        console.error(err);
+        result.innerText = "Erro ao emitir: " + err.message;
+      }
+    }
+
+    async function checkCredential() {
+      const id = document.getElementById("credId").value;
+      const result = document.getElementById("checkResult");
+
+      try {
+        const isValid = await contract.isCredentialValid(id);
+        result.innerText = isValid ? "✅ Credencial válida" : "❌ Credencial inválida ou revogada";
+      } catch (err) {
+        result.innerText = "Erro na verificação: " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
