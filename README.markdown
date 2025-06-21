@@ -11,7 +11,7 @@ Explorar os desafios de tornar técnicas de **Zero Trust** mais **amigáveis** e
 
 
 ## Slides:
-[Slides da apresentação](https://www.canva.com/design/DAGqW0uCK-M/JF1jZ3MrgiXaxCY4BvDsKA/edit?utm_content=DAGqW0uCK-M&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+[[Slides da apresentação](https://www.canva.com/design/DAGqW0uCK-M/JF1jZ3MrgiXaxCY4BvDsKA/edit?utm_content=DAGqW0uCK-M&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)](https://github.com/vdsilveira/ZeroTrust_VCs/issues/1#issue-3165502366)
 
 ## 🚀 Funcionalidades
 
