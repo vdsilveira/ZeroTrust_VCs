@@ -11,9 +11,7 @@ Explorar os desafios de tornar técnicas de **Zero Trust** mais **amigáveis** e
 
 
 ## Slides:
-
-
-🎥 [Clique aqui para assistir aos slides ](!(https://www.canva.com/design/DAGqW0uCK-M/JF1jZ3MrgiXaxCY4BvDsKA/edit?utm_content=DAGqW0uCK-M&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton))
+[Slides da apresentação](https://www.canva.com/design/DAGqW0uCK-M/JF1jZ3MrgiXaxCY4BvDsKA/edit?utm_content=DAGqW0uCK-M&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 
 ## 🚀 Funcionalidades
